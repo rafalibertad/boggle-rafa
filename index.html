@@ -38,8 +38,18 @@
         }
 
         .grid {
-            width: min(88vw, 88dvh);
-            height: min(88vw, 88dvh);
+            /* margen real respecto a los bordes físicos del teléfono */
+            --edge: 10px;
+        
+            width: min(
+                calc(100vw - (var(--edge) * 2)),
+                calc(100dvh - (var(--edge) * 2))
+            );
+        
+            height: min(
+                calc(100vw - (var(--edge) * 2)),
+                calc(100dvh - (var(--edge) * 2))
+            );
         
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -50,6 +60,7 @@
         
             box-sizing: border-box;
         }
+        
         
         .die {
             aspect-ratio: 1;
