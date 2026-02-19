@@ -325,7 +325,7 @@
             ['P','L','A','R','E','O'],
             ['T','U','R','A','L','E'],
             ['B','G','V','Y','H','F'],
-            ['J','Ñ','X','Z','Q','U']
+            ['J','Ñ','X','Z','Qu','U']
         ];
 
         class BoggleGame {
@@ -363,10 +363,7 @@
             getRandomFace(index) {
                 const faces = dieFaces[index % dieFaces.length];
                 let letter = faces[Math.floor(Math.random() * 6)];
-            
-                if (letter === 'Q') {
-                    return 'Qu';
-                }
+    
                 return letter;
             }
 
