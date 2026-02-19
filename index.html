@@ -280,7 +280,6 @@
         <div class="score-panel">
             <div class="score-header">
                 <span>📖 Puntaje</span>
-                <button id="closeScore">✖</button>
             </div>
     
             <table class="score-table">
@@ -442,11 +441,7 @@
                 document.getElementById('scoreBtn').onclick = () => {
                     document.getElementById('scoreModal').classList.add('show');
                 };
-                
-                document.getElementById('closeScore').onclick = () => {
-                    document.getElementById('scoreModal').classList.remove('show');
-                };
-                
+                                
                 // cerrar tocando afuera
                 document.getElementById('scoreModal').onclick = (e) => {
                     if (e.target.id === 'scoreModal') {
