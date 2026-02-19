@@ -386,13 +386,13 @@
                 
                 if (!this.isTimerRunning) {
                     this.isTimerRunning = true;
-                    document.getElementById('timerBtn').textContent = '⏹️ Parar';
+                    document.getElementById('timerBtn').textContent = '⏹️';
                     document.getElementById('timerBtn').classList.add('running');
                     document.getElementById('resetBtn').disabled = false;
                     this.startTimerInterval();
                 } else {
                     this.isTimerRunning = false;
-                    document.getElementById('timerBtn').textContent = '▶️ Continuar';
+                    document.getElementById('timerBtn').textContent = '▶️';
                     document.getElementById('timerBtn').classList.remove('running');
                     clearInterval(this.timerInterval);
                 }
