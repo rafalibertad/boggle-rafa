@@ -310,10 +310,22 @@
     
     <script>
         const dieFaces = [
-            ['G','O','L','D','O','B'], ['A','E','I','N','O','T'], ['U','A','D','E','L','R'], ['A','C','E','N','O','S'],
-            ['T','E','R','I','V','A'], ['F','P','S','A','F','K'], ['D','R','X','I','E','L'], ['J','B','O','O','B','A'],
-            ['E','G','N','E','A','A'], ['H','W','V','E','T','R'], ['H','E','E','N','W','G'], ['Q','U','M','H','I','N'],
-            ['R','Y','V','D','E','L'], ['C','I','O','T','U','E'], ['M','A','E','S','N','O'], ['P','R','S','T','U','A']
+            ['A','A','E','E','O','O'],
+            ['A','E','I','O','U','S'],
+            ['A','R','E','S','T','N'],
+            ['A','L','E','R','S','T'],
+            ['E','I','O','S','N','R'],
+            ['E','I','N','S','T','U'],
+            ['O','R','A','L','E','S'],
+            ['I','D','E','L','R','T'],
+            ['C','A','R','E','S','T'],
+            ['C','O','M','P','A','S'],
+            ['D','E','L','A','R','O'],
+            ['M','A','N','T','E','S'],
+            ['P','L','A','R','E','O'],
+            ['T','U','R','A','L','E'],
+            ['B','G','V','Y','H','F'],
+            ['J','Ñ','X','Z','Q','U']
         ];
 
         class BoggleGame {
@@ -350,9 +362,15 @@
 
             getRandomFace(index) {
                 const faces = dieFaces[index % dieFaces.length];
-                return faces[Math.floor(Math.random() * 6)];
+                let letter = faces[Math.floor(Math.random() * 6)];
+            
+                if (letter === 'Q') {
+                    return 'Qu';
+                }
+                return letter;
             }
 
+            
             shuffle() {
                 if (this.isTimeUp) return;
                 
