@@ -12,9 +12,10 @@
         }
         
         html, body {
-            height: 100vh;
+            height: 100vh;   /* fallback */
+            height: 100dvh;  /* viewport dinámico real */
             width: 100vw;
-            overflow: hidden;
+           /* overflow: hidden;*/
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             font-family: -apple-system, BlinkMacSystemFont, sans-serif;
         }
@@ -22,7 +23,8 @@
         .container {
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100vh;   /* fallback */
+            height: 100dvh;  /* solución iPhone */
             width: 100vw;
         }
         
@@ -35,18 +37,32 @@
             flex-shrink: 0;
         }
         
-        .grid {
+      /*  .grid {
             flex: 1;
             display: grid;
             grid-template-columns: repeat(4, 1fr);
             grid-template-rows: repeat(4, 1fr);
-            /*gap: clamp(0.5vw, 2vw, 8px);*/
-            gap: 6px;
+            gap: clamp(0.5vw, 2vw, 8px);
             width: 100%;
             max-width: 100vw;
             padding: clamp(1vw, 3vw, 15px);
             box-sizing: border-box;
+        }*/
+
+        .grid {
+            align-self: center;
+            width: min(92vw, 92dvh);
+            height: min(92vw, 92dvh);
+
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+
+            gap: clamp(4px, 1.5vw, 10px);
+            padding: clamp(6px, 2vw, 14px);
+            box-sizing: border-box;
         }
+
         
         .die {
             aspect-ratio: 1;
@@ -149,7 +165,7 @@
 
         @media (max-width: 768px) { /* iPhone */
             .grid {
-                gap: 2px !important; /* Espacios TIGHT en iPhone */
+                gap: 4px !important; /* Espacios TIGHT en iPhone */
                 padding: 8px !important;
             }
             .controls {
