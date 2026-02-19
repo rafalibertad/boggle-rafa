@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Boggle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        h1 {
+            color: white;
+            font-size: clamp(24px, 5vw, 32px);
+            text-align: center;
+            padding: 8px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+        
+        .grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            gap: clamp(0.5vw, 2vw, 8px);
+            width: 100%;
+            max-width: 100vw;
+            padding: clamp(1vw, 3vw, 15px);
+            box-sizing: border-box;
+        }
+        
+        .die {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.95);
+            border-radius: 15%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(42px, 18vw, 65px);
+            font-weight: 950;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+        
+        .die:hover:not(:disabled) { 
+            transform: scale(1.08); 
+            box-shadow: 0 15px 45px rgba(0,0,0,0.6);
+        }
+        
+        .die.shaking { 
+            animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; 
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0) rotate(0deg); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px) rotate(-2deg); }
+            20%, 40%, 60%, 80% { transform: translateX(3px) rotate(2deg); }
+        }
+        
+        .controls {
+            display: flex;
+            gap: 12px;
+            padding: 15px 20px;
+            justify-content: center;
+            background: rgba(0,0,0,0.2);
+            backdrop-filter: blur(20px);
+            flex-shrink: 0;
+        }
+        
+        button {
+            flex: 1;
+            padding: 18px 8px;
+            font-size: clamp(16px, 4vw, 20px);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            cursor: pointer;
+            font-weight: 700;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 160px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        #shuffleBtn { background: linear-gradient(145deg, #4CAF50, #45a049); }
+        #shuffleBtn:hover:not(:disabled) { transform: translateY(-2px); }
+        #shuffleBtn:active:not(:disabled) { transform: translateY(0); }
+        #shuffleBtn:disabled { background: #666; cursor: not-allowed; transform: none; }
+        
+        #timerBtn { background: linear-gradient(145deg, #FF9800, #e68900); }
+        #timerBtn.running { background: linear-gradient(145deg, #2196F3, #1976D2); }
+        #timerBtn:hover:not(:disabled) { transform: translateY(-2px); }
+        #timerBtn:disabled { background: #666; cursor: not-allowed; transform: none; }
+        
+        #resetBtn { background: linear-gradient(145deg, #9C27B0, #7B1FA2); }
+        #resetBtn:hover:not(:disabled) { transform: translateY(-2px); }
+        #resetBtn:disabled { background: #666; cursor: not-allowed; transform: none; }
+        
+        #timer {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            font-size: clamp(28px, 8vw, 42px);
+            font-weight: 900;
+            color: rgba(255,255,255,0.95);
+            z-index: 100;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+            transition: all 0.4s ease;
+        }
+        
+        .time-up {
+            color: #ff4444 !important;
+            text-shadow: 0 0 25px #ff4444, 0 0 40px #ff4444;
+            animation: pulse 0.8s infinite;
+            filter: drop-shadow(0 0 15px #ff4444);
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.12); }
+        }
+        
+        @media (orientation: landscape) {
+            .grid { gap: 1vw; padding: 1vw; }
+            .controls { padding: 12px 15px; }
+        }
+
+        @media (max-width: 768px) { /* iPhone */
+            .grid {
+                gap: 4px !important; /* Espacios TIGHT en iPhone */
+                padding: 8px !important;
+            }
+            .controls {
+                gap: 8px;
+                padding: 10px;
+            }
+            button {
+                padding: 12px 4px;
+                font-size: 16px;
+                min-height: 48px; /* Touch target iOS */
+            }
+        }
+
+        @media (max-width: 414px) { /* iPhone pequeño */
+            .die {
+                font-size: clamp(24px, 16vw, 38px);
+                border-radius: 12%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>&nbsp;</h1>
+        <div class="grid" id="diceGrid"></div>
+        <div class="controls">
+            <button id="shuffleBtn">🎲 Mezclar</button>
+            <button id="timerBtn">⏱️ Iniciar</button>
+            <button id="resetBtn" disabled>🔄 Reset</button>
+        </div>
+    </div>
+    <div id="timer">00:00</div>
+
+    <script>
+        const dieFaces = [
+            ['G','O','L','D','O','B'], ['A','E','I','N','O','T'], ['U','A','D','E','L','R'], ['A','C','E','N','O','S'],
+            ['T','E','R','I','V','A'], ['F','P','S','A','F','K'], ['D','R','X','I','E','L'], ['J','B','O','O','B','A'],
+            ['E','G','N','E','A','A'], ['H','W','V','E','T','R'], ['H','E','E','N','W','G'], ['Q','U','M','H','I','N'],
+            ['R','Y','V','D','E','L'], ['C','I','O','T','U','E'], ['M','A','E','S','N','O'], ['P','R','S','T','U','A']
+        ];
+
+        class BoggleGame {
+            constructor() {
+                this.diceGrid = [];
+                this.timer = 0;
+                this.maxTime = 120;
+                this.timerInterval = null;
+                this.isTimerRunning = false;
+                this.isTimeUp = false;
+                this.init();
+            }
+
+            init() {
+                this.createGrid();
+                this.updateTimerDisplay();
+                this.bindEvents();
+            }
+
+            createGrid() {
+                const grid = document.getElementById('diceGrid');
+                grid.innerHTML = '';
+                this.diceGrid = [];
+                
+                for (let i = 0; i < 16; i++) {
+                    const die = document.createElement('div');
+                    die.className = 'die';
+                    die.dataset.index = i;
+                    die.textContent = this.getRandomFace(i);
+                    this.diceGrid.push(die);
+                    grid.appendChild(die);
+                }
+            }
+
+            getRandomFace(index) {
+                const faces = dieFaces[index % dieFaces.length];
+                return faces[Math.floor(Math.random() * 6)];
+            }
+
+            shuffle() {
+                if (this.isTimeUp) return;
+                
+                const diceData = this.diceGrid.map((die, index) => ({
+                    element: die,
+                    index: index,
+                    face: die.textContent
+                }));
+                
+                // Barajar posiciones
+                for (let i = diceData.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [diceData[i], diceData[j]] = [diceData[j], diceData[i]];
+                }
+                
+                const grid = document.getElementById('diceGrid');
+                grid.innerHTML = '';
+                this.diceGrid = [];
+                
+                diceData.forEach((data, newIndex) => {
+                    const newDie = document.createElement('div');
+                    newDie.className = 'die';
+                    newDie.dataset.index = newIndex;
+                    const originalFaces = dieFaces[data.index % dieFaces.length];
+                    newDie.textContent = originalFaces[Math.floor(Math.random() * 6)];
+                    
+                    newDie.classList.add('shaking');
+                    this.diceGrid.push(newDie);
+                    grid.appendChild(newDie);
+                    
+                    setTimeout(() => newDie.classList.remove('shaking'), 600);
+                });
+            }
+
+            startTimerInterval() {
+                this.timerInterval = setInterval(() => {
+                    this.timer++;
+                    this.updateTimerDisplay();
+                    if (this.timer >= this.maxTime) this.timeUp();
+                }, 1000);
+            }
+
+            toggleTimer() {
+                if (this.isTimeUp) return;
+                
+                if (!this.isTimerRunning) {
+                    this.isTimerRunning = true;
+                    document.getElementById('timerBtn').textContent = '⏹️ Parar';
+                    document.getElementById('timerBtn').classList.add('running');
+                    document.getElementById('resetBtn').disabled = false;
+                    this.startTimerInterval();
+                } else {
+                    this.isTimerRunning = false;
+                    document.getElementById('timerBtn').textContent = '▶️ Continuar';
+                    document.getElementById('timerBtn').classList.remove('running');
+                    clearInterval(this.timerInterval);
+                }
+            }
+
+            resetTimer() {
+                if (this.timerInterval) clearInterval(this.timerInterval);
+                this.timer = 0;
+                this.isTimerRunning = false;
+                this.isTimeUp = false;
+                
+                document.getElementById('timerBtn').textContent = '⏱️ Iniciar';
+                document.getElementById('timerBtn').classList.remove('running');
+                document.getElementById('shuffleBtn').disabled = false;
+                document.getElementById('resetBtn').disabled = true;
+                document.getElementById('timer').classList.remove('time-up');
+                document.getElementById('timerBtn').disabled = false;
+                
+                this.updateTimerDisplay();
+            }
+
+            timeUp() {
+                this.isTimerRunning = false;
+                this.isTimeUp = true;
+                clearInterval(this.timerInterval);
+           
+                document.getElementById('timer').classList.add('time-up');
+                document.getElementById('shuffleBtn').disabled = true;
+                document.getElementById('timerBtn').disabled = true;
+                document.getElementById('timerBtn').textContent = '⏱️ Tiempo Up';
+                document.getElementById('resetBtn').disabled = false;
+            }
+
+            updateTimerDisplay() {
+                const minutes = Math.floor(this.timer / 60);
+                const seconds = this.timer % 60;
+                document.getElementById('timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            bindEvents() {
+                document.getElementById('shuffleBtn').onclick = () => this.shuffle();
+                document.getElementById('timerBtn').onclick = () => this.toggleTimer();
+                document.getElementById('resetBtn').onclick = () => this.resetTimer();
+            }
+        }
+
+        new BoggleGame();
+    </script>
+</body>
+</html>
