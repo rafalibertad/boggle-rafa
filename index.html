@@ -98,7 +98,7 @@
         
             box-sizing: border-box;
             z-index: 2;
-            background: rgba(0,0,0,1);
+            background: rgba(57, 4, 111, 1);
             border-radius: 22px;
             box-shadow: inset 0 0 18px rgba(0,0,0,0.45);
         }
@@ -335,7 +335,7 @@
              <span class="countdown"></span>
         </div>
         <div class="controls">
-            <button id="shuffleBtn">🎲v2</button>
+            <button id="shuffleBtn">🎲</button>
             <button id="timerBtn" disabled>⏹️</button>
             <button id="scoreBtn">📖</button>
         </div>
@@ -386,7 +386,7 @@
             constructor() {
                 this.diceGrid = [];
                 this.timer = 0;
-                this.maxTime = 10;
+                this.maxTime = 180;
                 this.timerInterval = null;
                 this.isTimerRunning = false;
                 this.isTimeUp = false;
@@ -482,9 +482,9 @@
                 
                 document.getElementById('timerBtn').textContent = '⏹️';
                 document.getElementById('timerBtn').classList.remove('running');
-                document.getElementById('shuffleBtn').disabled = false;
+                document.getElementById('shuffleBtn').disabled = true;
                 document.getElementById('timer').classList.remove('time-up');
-                document.getElementById('timerBtn').disabled = false;
+                document.getElementById('timerBtn').disabled = true;
                 
                 this.updateTimerDisplay();
             }
@@ -506,7 +506,6 @@
             }
 
             startCountdown() {
-
                 this.resetTimer();
 
                 const overlay = document.querySelector('.gridOverlay');
@@ -525,6 +524,9 @@
                         // Terminado: ocultar overlay
                         overlay.style.display = 'none';
                         self.toggleTimer();
+                        document.getElementById('shuffleBtn').disabled = false;
+                        document.getElementById('timerBtn').disabled = false;
+
                         return;
                     }
 
