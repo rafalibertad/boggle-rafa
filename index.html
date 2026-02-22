@@ -181,10 +181,6 @@
         #timerBtn:hover:not(:disabled) { transform: translateY(-2px); }
         #timerBtn:disabled { background: #666; cursor: not-allowed; transform: none; }
         
-        #resetBtn { background: linear-gradient(145deg, #9C27B0, #7B1FA2); }
-        #resetBtn:hover:not(:disabled) { transform: translateY(-2px); }
-        #resetBtn:disabled { background: #666; cursor: not-allowed; transform: none; }
-        
         #timer {
             position: fixed;
             top: calc(env(safe-area-inset-top) + 10px);
@@ -287,21 +283,6 @@
             text-align: center;
             line-height: 1;
         }
-     
-        @keyframes hideOverlay {
-            0%   { background: rgba(0,0,0,1); }
-            99%  { background: rgba(0,0,0,1); } /* se mantiene negro todo el tiempo */
-            100% { background: rgba(0,0,0,0); } /* desaparece de golpe al final */
-        }
-
-        /* Animación que hace aparecer, zoom y desaparecer */
-        @keyframes countdownContent {
-            0%   { content: "3"; }
-            25%  { content: "2"; }
-            50%  { content: "1"; }
-            75%  { content: "YA!"; }
-            100% { content: ""; }
-        }
         
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -354,9 +335,8 @@
              <span class="countdown"></span>
         </div>
         <div class="controls">
-            <button id="shuffleBtn">🎲v1</button>
-            <button id="timerBtn">⏱️</button>
-            <button id="resetBtn" disabled>🔄</button>
+            <button id="shuffleBtn">🎲v2</button>
+            <button id="timerBtn" disabled>⏹️</button>
             <button id="scoreBtn">📖</button>
         </div>
     </div>
@@ -414,6 +394,7 @@
             }
 
             init() {
+                this.showIntro();
                 this.createGrid();
                 this.updateTimerDisplay();
                 this.bindEvents();
@@ -479,12 +460,13 @@
                 if (this.isTimeUp) return;
                 
                 if (!this.isTimerRunning) {
+                    this.hidePause();
                     this.isTimerRunning = true;
                     document.getElementById('timerBtn').textContent = '⏹️';
                     document.getElementById('timerBtn').classList.add('running');
-                    document.getElementById('resetBtn').disabled = false;
                     this.startTimerInterval();
                 } else {
+                    this.showPause();
                     this.isTimerRunning = false;
                     document.getElementById('timerBtn').textContent = '▶️';
                     document.getElementById('timerBtn').classList.remove('running');
@@ -498,10 +480,9 @@
                 this.isTimerRunning = false;
                 this.isTimeUp = false;
                 
-                document.getElementById('timerBtn').textContent = '⏱️';
+                document.getElementById('timerBtn').textContent = '⏹️';
                 document.getElementById('timerBtn').classList.remove('running');
                 document.getElementById('shuffleBtn').disabled = false;
-                document.getElementById('resetBtn').disabled = true;
                 document.getElementById('timer').classList.remove('time-up');
                 document.getElementById('timerBtn').disabled = false;
                 
@@ -514,10 +495,7 @@
                 clearInterval(this.timerInterval);
            
                 document.getElementById('timer').classList.add('time-up');
-                document.getElementById('shuffleBtn').disabled = true;
                 document.getElementById('timerBtn').disabled = true;
-                document.getElementById('timerBtn').textContent = '⏱️';
-                document.getElementById('resetBtn').disabled = false;
             }
 
             updateTimerDisplay() {
@@ -531,7 +509,7 @@
 
                 this.resetTimer();
 
-               const overlay = document.querySelector('.gridOverlay');
+                const overlay = document.querySelector('.gridOverlay');
                 const countdown = overlay.querySelector('.countdown');
                 const pasos = ["3", "2", "1", "YA!"];
 
@@ -569,10 +547,41 @@
                 mostrarPaso(0);
             }
 
+            showIntro() {
+
+                const overlay = document.querySelector('.gridOverlay');
+                const countdown = overlay.querySelector('.countdown');
+
+                // Mostrar overlay
+                overlay.style.display = 'flex';
+                countdown.style.transform = 'scale(1)';
+                countdown.textContent = 'BOGGLE';
+            }
+
+
+            showPause() {
+
+                const overlay = document.querySelector('.gridOverlay');
+                const countdown = overlay.querySelector('.countdown');
+
+                // Mostrar overlay
+                overlay.style.display = 'flex';
+                countdown.style.transform = 'scale(1)';
+                countdown.textContent = 'PAUSA';
+            }
+
+            hidePause() {
+
+                const overlay = document.querySelector('.gridOverlay');
+                const countdown = overlay.querySelector('.countdown');
+
+                // ocultar overlay
+                overlay.style.display = 'none';
+            }
+
             bindEvents() {
                 document.getElementById('shuffleBtn').onclick = () => this.shuffle();
                 document.getElementById('timerBtn').onclick = () => this.toggleTimer();
-                document.getElementById('resetBtn').onclick = () => this.resetTimer();
 
                 // Puntaje modal
                 document.getElementById('scoreBtn').onclick = () => {
