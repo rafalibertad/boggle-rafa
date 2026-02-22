@@ -335,7 +335,7 @@
             ['P','L','A','R','E','O'],
             ['T','U','R','A','L','E'],
             ['B','G','V','Y','H','F'],
-            ['J','Ñ','X','Z','Qu','U']
+            ['J','Ñ','X','Z','Qu','H']
         ];
 
         class BoggleGame {
@@ -354,21 +354,6 @@
                 this.updateTimerDisplay();
                 this.bindEvents();
             }
-
-            /*createGrid() {
-                const grid = document.getElementById('diceGrid');
-                grid.innerHTML = '';
-                this.diceGrid = [];
-                
-                for (let i = 0; i < 16; i++) {
-                    const die = document.createElement('div');
-                    die.className = 'die';
-                    die.dataset.index = i;
-                    die.textContent = this.getRandomFace(i);
-                    this.diceGrid.push(die);
-                    grid.appendChild(die);
-                }
-            }*/
 
             createGrid() {
                 const grid = document.getElementById('diceGrid');
@@ -404,42 +389,7 @@
     
                 return letter;
             }
-
             
-          /*  shuffle() {
-                if (this.isTimeUp) return;
-                
-                const diceData = this.diceGrid.map((die, index) => ({
-                    element: die,
-                    index: index,
-                    face: die.textContent
-                }));
-                
-                // Barajar posiciones
-                for (let i = diceData.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [diceData[i], diceData[j]] = [diceData[j], diceData[i]];
-                }
-                
-                const grid = document.getElementById('diceGrid');
-                grid.innerHTML = '';
-                this.diceGrid = [];
-                
-                diceData.forEach((data, newIndex) => {
-                    const newDie = document.createElement('div');
-                    newDie.className = 'die';
-                    newDie.dataset.index = newIndex;
-                    const originalFaces = dieFaces[data.index % dieFaces.length];
-                    newDie.textContent = originalFaces[Math.floor(Math.random() * 6)];
-                    
-                    newDie.classList.add('shaking');
-                    this.diceGrid.push(newDie);
-                    grid.appendChild(newDie);
-                    
-                    setTimeout(() => newDie.classList.remove('shaking'), 600);
-                });
-            }*/
-
             shuffle() {
                 if (this.isTimeUp) return;
             
