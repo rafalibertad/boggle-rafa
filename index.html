@@ -355,7 +355,7 @@
                 this.bindEvents();
             }
 
-            createGrid() {
+            /*createGrid() {
                 const grid = document.getElementById('diceGrid');
                 grid.innerHTML = '';
                 this.diceGrid = [];
@@ -365,6 +365,34 @@
                     die.className = 'die';
                     die.dataset.index = i;
                     die.textContent = this.getRandomFace(i);
+                    this.diceGrid.push(die);
+                    grid.appendChild(die);
+                }
+            }*/
+
+            createGrid() {
+                const grid = document.getElementById('diceGrid');
+                grid.innerHTML = '';
+                this.diceGrid = [];
+            
+                // 1) copiar dados
+                const dice = [...dieFaces];
+            
+                // 2) barajar dados (Fisher-Yates)
+                for (let i = dice.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [dice[i], dice[j]] = [dice[j], dice[i]];
+                }
+            
+                // 3) colocar dados ya mezclados
+                for (let i = 0; i < 16; i++) {
+                    const die = document.createElement('div');
+                    die.className = 'die';
+                    die.dataset.index = i;
+            
+                    const faces = dice[i];
+                    die.textContent = faces[Math.floor(Math.random() * 6)];
+            
                     this.diceGrid.push(die);
                     grid.appendChild(die);
                 }
@@ -378,7 +406,7 @@
             }
 
             
-            shuffle() {
+          /*  shuffle() {
                 if (this.isTimeUp) return;
                 
                 const diceData = this.diceGrid.map((die, index) => ({
@@ -409,6 +437,17 @@
                     grid.appendChild(newDie);
                     
                     setTimeout(() => newDie.classList.remove('shaking'), 600);
+                });
+            }*/
+
+            shuffle() {
+                if (this.isTimeUp) return;
+            
+                this.createGrid();
+            
+                this.diceGrid.forEach(die => {
+                    die.classList.add('shaking');
+                    setTimeout(() => die.classList.remove('shaking'), 600);
                 });
             }
 
