@@ -62,8 +62,43 @@
             padding: clamp(8px, 2vmin, 16px);
         
             box-sizing: border-box;
-
+            z-index: 1;
             background: rgba(0,0,0,0.18);
+            border-radius: 22px;
+            box-shadow: inset 0 0 18px rgba(0,0,0,0.45);
+        }
+
+        .gridOverlay {
+            /* margen real respecto a los bordes físicos del teléfono */
+            --edge: 10px;
+            
+            position: absolute;
+            
+            animation: hideOverlay 4s steps(1) forwards; /* solo un paso, desaparece al final */
+
+            width: min(
+                calc(100vw - (var(--edge) * 2)),
+                calc(100dvh - (var(--edge) * 2))
+            );
+        
+            height: min(
+                calc(100vw - (var(--edge) * 2)),
+                calc(100dvh - (var(--edge) * 2))
+            );
+        
+            display: none;
+            justify-content: center;
+            align-items: center;
+
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+        
+            gap: clamp(6px, 1.6vmin, 12px);
+            padding: clamp(8px, 2vmin, 16px);
+        
+            box-sizing: border-box;
+            z-index: 2;
+            background: rgba(0,0,0,1);
             border-radius: 22px;
             box-shadow: inset 0 0 18px rgba(0,0,0,0.45);
         }
@@ -243,6 +278,30 @@
             border-bottom: 1px solid #ddd;
             font-weight: 700;
         }
+
+        /* Texto del contador */
+        .countdown {
+            font-size: 20vmin;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            line-height: 1;
+        }
+     
+        @keyframes hideOverlay {
+            0%   { background: rgba(0,0,0,1); }
+            99%  { background: rgba(0,0,0,1); } /* se mantiene negro todo el tiempo */
+            100% { background: rgba(0,0,0,0); } /* desaparece de golpe al final */
+        }
+
+        /* Animación que hace aparecer, zoom y desaparecer */
+        @keyframes countdownContent {
+            0%   { content: "3"; }
+            25%  { content: "2"; }
+            50%  { content: "1"; }
+            75%  { content: "YA!"; }
+            100% { content: ""; }
+        }
         
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -291,8 +350,11 @@
 <body>
     <div class="container">
         <div class="grid" id="diceGrid"></div>
+        <div class="gridOverlay" id="diceGridOverlay">
+             <span class="countdown"></span>
+        </div>
         <div class="controls">
-            <button id="shuffleBtn">🎲</button>
+            <button id="shuffleBtn">🎲v1</button>
             <button id="timerBtn">⏱️</button>
             <button id="resetBtn" disabled>🔄</button>
             <button id="scoreBtn">📖</button>
@@ -338,11 +400,13 @@
             ['J','Ñ','X','Z','Qu','H']
         ];
 
+        
+
         class BoggleGame {
             constructor() {
                 this.diceGrid = [];
                 this.timer = 0;
-                this.maxTime = 180;
+                this.maxTime = 10;
                 this.timerInterval = null;
                 this.isTimerRunning = false;
                 this.isTimeUp = false;
@@ -391,6 +455,8 @@
             }
             
             shuffle() {
+                this.startCountdown();
+
                 if (this.isTimeUp) return;
             
                 this.createGrid();
@@ -459,6 +525,48 @@
                 const seconds = this.timer % 60;
                 document.getElementById('timerText').textContent = 
                     `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }
+
+            startCountdown() {
+
+                this.resetTimer();
+
+               const overlay = document.querySelector('.gridOverlay');
+                const countdown = overlay.querySelector('.countdown');
+                const pasos = ["3", "2", "1", "YA!"];
+
+                // Mostrar overlay y reset
+                overlay.style.display = 'flex';
+                countdown.style.transform = 'scale(1)';
+                countdown.textContent = '';
+
+                const self = this;
+
+                function mostrarPaso(index) {
+                    if (index >= pasos.length) {
+                        // Terminado: ocultar overlay
+                        overlay.style.display = 'none';
+                        self.toggleTimer();
+                        return;
+                    }
+
+                    // Mostrar número actual
+                    countdown.textContent = pasos[index];
+
+                    // Rebote con CSS
+                    countdown.style.transform = 'scale(1.5)';
+                    setTimeout(() => {
+                        countdown.style.transform = 'scale(1)';
+                    }, 300);
+
+                    // Pasar al siguiente número después de 1 segundo
+                    setTimeout(() => {
+                        mostrarPaso(index + 1);
+                    }, 1000);
+                }
+
+                // Empezar con el primer número
+                mostrarPaso(0);
             }
 
             bindEvents() {
