@@ -396,6 +396,9 @@
             ['J','Ñ','X','Z','Qu','H']
         ];
 
+        const SFX = {
+            shake: new Audio('sfx/shake.mp3'),
+        };
         
 
         class BoggleGame {
@@ -583,9 +586,9 @@
             }
 
             animarMezcla(callback) {
-
+                this.play('shake');
                 let frame = 0;
-                const maxFrames = 20;   // un poco más larga, pero empieza MUCHO más rápida
+                const maxFrames = 25;   // un poco más larga, pero empieza MUCHO más rápida
 
                 const step = () => {
 
@@ -624,6 +627,14 @@
                 };
 
                 step();
+            }
+
+            play(sound) {
+                const s = SFX[sound];
+                if (!s) return;
+
+                s.currentTime = 0; // permite repetir rápido
+                s.play().catch(()=>{});
             }
 
             bindEvents() {
