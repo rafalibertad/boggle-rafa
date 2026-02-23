@@ -557,7 +557,9 @@
                         
                         if (self.isTimeUp) return;
             
-                        self.animarMezcla();
+                      //  self.animarMezcla();
+
+                        self.animarMezcla(() => self.toggleTimer());
 
                        /* self.createGrid();
             
@@ -566,7 +568,7 @@
                             setTimeout(() => die.classList.remove('shaking'), 600);
                         });*/
                         
-                        self.toggleTimer();
+                      //  self.toggleTimer();
 
                         document.getElementById('timerBtn').disabled = false;
 
@@ -624,9 +626,9 @@
                 overlay.style.display = 'none';
             }
 
-            animarMezcla(callback) {
+           /* animarMezcla(callback) {
                 let frames = 0;
-                const maxFrames = 15; // cantidad de cambios rápidos
+                const maxFrames = 10; // cantidad de cambios rápidos
                 const intervalo = 50; // velocidad (ms)
 
                 const anim = setInterval(() => {
@@ -634,6 +636,7 @@
                     this.createGrid();
 
                     frames++;
+    
 
                     if (frames >= maxFrames) {
                         clearInterval(anim);
@@ -641,6 +644,50 @@
                     }
 
                 }, intervalo);
+            }*/
+
+            animarMezcla(callback) {
+
+                let frame = 0;
+                const maxFrames = 20;   // un poco más larga, pero empieza MUCHO más rápida
+
+                const step = () => {
+
+                    this.createGrid();
+                    frame++;
+
+                    let intervalo;
+
+                    // FASE 1 – sacudida ultra rápida
+                    if (frame < 5) {
+                        intervalo = 8;  // casi instantáneo
+
+                    // FASE 2 – mezcla rápida
+                    } else if (frame < 9) {
+                        intervalo = 20;
+
+                    // FASE 3 – frenado comprimido
+                    } else {
+                        const t = (frame - 9) / (maxFrames - 9);
+                        const easing = 1 - Math.pow(1 - t, 3);
+                        intervalo = 35 + (easing * 140); // antes era mucho más largo
+                    }
+
+                    if (frame < maxFrames) {
+                        setTimeout(step, intervalo);
+                    } else {
+
+                        // tablero definitivo
+                        this.createGrid();
+
+                        // pequeño "clack" sensorial en móviles
+                        navigator.vibrate?.(40);
+
+                        if (callback) callback();
+                    }
+                };
+
+                step();
             }
 
             bindEvents() {
