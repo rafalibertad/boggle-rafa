@@ -377,6 +377,10 @@
     </div>
     
     <script>
+
+        let audioUnlocked = false;
+        let audioCtx;
+
         const dieFaces = [
             ['A','A','E','E','O','O'],
             ['A','E','I','O','U','S'],
@@ -402,6 +406,11 @@
             finish: new Audio('sfx/finish.mp3'),
             clock: new Audio('sfx/clock.mp3')
         };
+
+        Object.values(SFX).forEach(a => {
+          a.preload = "auto";
+          a.load();
+        });
         
 
         class BoggleGame {
@@ -574,7 +583,7 @@
                 // Mostrar overlay
                 overlay.style.display = 'flex';
                 countdown.style.transform = 'scale(1)';
-                countdown.textContent = 'BOGGLE';
+                countdown.textContent = 'BOGGLi';
             }
 
 
@@ -647,6 +656,20 @@
                 s.play().catch(()=>{});
             }
 
+            unlockAudio() {
+                if (audioUnlocked) return;
+
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+                const buffer = audioCtx.createBuffer(1, 1, 22050);
+                const source = audioCtx.createBufferSource();
+                source.buffer = buffer;
+                source.connect(audioCtx.destination);
+                source.start(0);
+
+                audioUnlocked = true;
+            }
+
             bindEvents() {
                 const shuffleBtn = document.getElementById('shuffleBtn');
                 const timerBtn = document.getElementById('timerBtn');
@@ -687,16 +710,7 @@
                     }
                 };
 
-                document.body.addEventListener('click', () => {
-                    Object.values(SFX).forEach(a => {
-                        a.volume = 0;
-                        a.play().then(() => {
-                            a.pause();
-                            a.currentTime = 0;
-                            a.volume = 1;
-                        }).catch(()=>{});
-                    });
-                }, { once: true });
+                document.body.addEventListener('pointerdown', unlockAudio, { once: true });
 
             }
         }
