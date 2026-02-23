@@ -370,8 +370,8 @@
     <!-- Modal -->
     <div id="confirmModal" class="modal">
     <div class="modal-content">
-        <p>¿Reiniciar?</p>
-        <button id="confirmYes">&nbsp;&nbsp;&nbsp;&nbsp;Sí&nbsp;&nbsp;&nbsp;&nbsp;</button>
+        <p>PAUSA</p>
+        <button id="confirmYes">&nbsp;&nbsp;&nbsp;&nbsp;Reiniciar&nbsp;&nbsp;&nbsp;&nbsp;</button>
         <button id="confirmNo">&nbsp;&nbsp;&nbsp;&nbsp;Continuar&nbsp;&nbsp;&nbsp;&nbsp;</button>
     </div>
     </div>
@@ -542,7 +542,7 @@
             
                         self.animarMezcla(() => self.toggleTimer());
 
-                        document.getElementById('timerBtn').disabled = false;
+                        //document.getElementById('timerBtn').disabled = false;
 
                         return;
                     }
@@ -578,7 +578,7 @@
                 // Mostrar overlay
                 overlay.style.display = 'flex';
                 countdown.style.transform = 'scale(1)';
-                countdown.textContent = 'boGGLi';
+                countdown.textContent = 'boGGlubi';
             }
 
 
@@ -635,6 +635,8 @@
 
                         // pequeño "clack" sensorial en móviles
                         navigator.vibrate?.(40);
+
+                        document.getElementById('timerBtn').disabled = false;
 
                         if (callback) callback();
                     }
