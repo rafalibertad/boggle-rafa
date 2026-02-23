@@ -294,7 +294,6 @@
             background: rgba(0,0,0,0.5); /* fondo semitransparente */
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(18px);
             z-index: 1000;
         }
 
@@ -477,15 +476,6 @@
             
             shuffle() {
                 this.startCountdown();
-
-                if (this.isTimeUp) return;
-            
-                this.createGrid();
-            
-                this.diceGrid.forEach(die => {
-                    die.classList.add('shaking');
-                    setTimeout(() => die.classList.remove('shaking'), 600);
-                });
             }
 
             startTimerInterval() {
@@ -500,18 +490,16 @@
                 if (this.isTimeUp) return;
                 
                 if (!this.isTimerRunning) {
-                   // this.hidePause();
+                    this.hidePause();
                     document.getElementById('confirmModal').style.display = 'none'; // ocultar modal
                     this.isTimerRunning = true;
                     document.getElementById('timerBtn').textContent = '⏹️';
                     document.getElementById('timerBtn').classList.add('running');
                     this.startTimerInterval();
                 } else {
-                 //   this.showPause();
+                    this.showPause();
                     document.getElementById('confirmModal').style.display = 'flex'; // mostrar modal
                     this.isTimerRunning = false;
-                    document.getElementById('timerBtn').textContent = '▶️';
-                    document.getElementById('timerBtn').classList.remove('running');
                     clearInterval(this.timerInterval);
                 }
             }
@@ -538,6 +526,7 @@
            
                 document.getElementById('timer').classList.add('time-up');
                 document.getElementById('timerBtn').disabled = true;
+                document.getElementById('shuffleBtn').disabled = false;
             }
 
             updateTimerDisplay() {
@@ -565,8 +554,18 @@
                     if (index >= pasos.length) {
                         // Terminado: ocultar overlay
                         overlay.style.display = 'none';
+                        
+                        if (self.isTimeUp) return;
+            
+                        self.createGrid();
+            
+                        self.diceGrid.forEach(die => {
+                            die.classList.add('shaking');
+                            setTimeout(() => die.classList.remove('shaking'), 600);
+                        });
+                        
                         self.toggleTimer();
-                      //  document.getElementById('shuffleBtn').disabled = false;
+
                         document.getElementById('timerBtn').disabled = false;
 
                         return;
@@ -611,7 +610,7 @@
                 // Mostrar overlay
                 overlay.style.display = 'flex';
                 countdown.style.transform = 'scale(1)';
-                countdown.textContent = 'PAUSA';
+                countdown.textContent = '';
             }
 
             hidePause() {
