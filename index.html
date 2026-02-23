@@ -294,6 +294,7 @@
             background: rgba(0,0,0,0.5); /* fondo semitransparente */
             justify-content: center;
             align-items: center;
+            backdrop-filter: blur(18px);
             z-index: 1000;
         }
 
@@ -393,9 +394,9 @@
     <!-- Modal -->
     <div id="confirmModal" class="modal">
     <div class="modal-content">
-        <p>¿Iniciar?</p>
+        <p>¿Reiniciar?</p>
         <button id="confirmYes">&nbsp;&nbsp;&nbsp;&nbsp;Sí&nbsp;&nbsp;&nbsp;&nbsp;</button>
-        <button id="confirmNo">&nbsp;&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;&nbsp;</button>
+        <button id="confirmNo">&nbsp;&nbsp;&nbsp;&nbsp;Continuar&nbsp;&nbsp;&nbsp;&nbsp;</button>
     </div>
     </div>
     
@@ -499,13 +500,15 @@
                 if (this.isTimeUp) return;
                 
                 if (!this.isTimerRunning) {
-                    this.hidePause();
+                   // this.hidePause();
+                    document.getElementById('confirmModal').style.display = 'none'; // ocultar modal
                     this.isTimerRunning = true;
                     document.getElementById('timerBtn').textContent = '⏹️';
                     document.getElementById('timerBtn').classList.add('running');
                     this.startTimerInterval();
                 } else {
-                    this.showPause();
+                 //   this.showPause();
+                    document.getElementById('confirmModal').style.display = 'flex'; // mostrar modal
                     this.isTimerRunning = false;
                     document.getElementById('timerBtn').textContent = '▶️';
                     document.getElementById('timerBtn').classList.remove('running');
@@ -563,7 +566,7 @@
                         // Terminado: ocultar overlay
                         overlay.style.display = 'none';
                         self.toggleTimer();
-                        document.getElementById('shuffleBtn').disabled = false;
+                      //  document.getElementById('shuffleBtn').disabled = false;
                         document.getElementById('timerBtn').disabled = false;
 
                         return;
@@ -622,25 +625,31 @@
 
             bindEvents() {
                 const shuffleBtn = document.getElementById('shuffleBtn');
+                const timerBtn = document.getElementById('timerBtn');
+
                 const modal = document.getElementById('confirmModal');
                 const yesBtn = document.getElementById('confirmYes');
                 const noBtn = document.getElementById('confirmNo');
 
                 shuffleBtn.onclick = () => {
-                    modal.style.display = 'flex'; // mostrar modal
+                    this.shuffle(); // llamar a tu función
                 };
 
                 yesBtn.onclick = () => {
                     modal.style.display = 'none'; // ocultar modal
-                    this.shuffle(); // llamar a tu función
+                    this.shuffle();
                 };
 
                 noBtn.onclick = () => {
                     modal.style.display = 'none'; // ocultar modal y no hacer nada
+                    this.toggleTimer();
                 };
 
 
-                document.getElementById('timerBtn').onclick = () => this.toggleTimer();
+                timerBtn.onclick = () => {
+                    this.toggleTimer()
+                };
+
 
                 // Puntaje modal
                 document.getElementById('scoreBtn').onclick = () => {
