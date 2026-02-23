@@ -398,6 +398,9 @@
 
         const SFX = {
             shake: new Audio('sfx/shake.mp3'),
+            tick: new Audio('sfx/tick.mp3'),
+            finish: new Audio('sfx/finish.mp3'),
+            clock: new Audio('sfx/clock.mp3')
         };
         
 
@@ -405,7 +408,7 @@
             constructor() {
                 this.diceGrid = [];
                 this.timer = 0;
-                this.maxTime = 180;
+                this.maxTime = 20;
                 this.timerInterval = null;
                 this.isTimerRunning = false;
                 this.isTimeUp = false;
@@ -455,6 +458,7 @@
                 this.timerInterval = setInterval(() => {
                     this.timer++;
                     this.updateTimerDisplay();
+                    if (this.timer == this.maxTime - 10) this.play('clock');
                     if (this.timer >= this.maxTime) this.timeUp();
                 }, 1000);
             }
@@ -496,7 +500,9 @@
                 this.isTimerRunning = false;
                 this.isTimeUp = true;
                 clearInterval(this.timerInterval);
-           
+                
+                this.play('finish');
+
                 document.getElementById('timer').classList.add('time-up');
                 document.getElementById('timerBtn').disabled = true;
                 document.getElementById('shuffleBtn').disabled = false;
@@ -539,7 +545,11 @@
 
                     // Mostrar número actual
                     countdown.textContent = pasos[index];
-
+                 
+                    if (index == 0) {
+                       self.play('tick');
+                    }
+                     
                     // Rebote con CSS
                     countdown.style.transform = 'scale(1.5)';
                     setTimeout(() => {
