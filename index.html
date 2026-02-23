@@ -71,31 +71,18 @@
         .gridOverlay {
             /* margen real respecto a los bordes físicos del teléfono */
             --edge: 10px;
-            
             position: absolute;
-            
-            animation: hideOverlay 4s steps(1) forwards; /* solo un paso, desaparece al final */
-
             width: min(
                 calc(100vw - (var(--edge) * 2)),
                 calc(100dvh - (var(--edge) * 2))
             );
-        
             height: min(
                 calc(100vw - (var(--edge) * 2)),
                 calc(100dvh - (var(--edge) * 2))
             );
-        
             display: none;
             justify-content: center;
             align-items: center;
-
-            grid-template-columns: repeat(4, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-        
-            gap: clamp(6px, 1.6vmin, 12px);
-            padding: clamp(8px, 2vmin, 16px);
-        
             box-sizing: border-box;
             z-index: 2;
             background: rgba(57, 4, 111, 1);
@@ -125,17 +112,7 @@
             transform: scale(1.08); 
             box-shadow: 0 15px 45px rgba(0,0,0,0.6);
         }
-        
-        .die.shaking { 
-            animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; 
-        }
-        
-        @keyframes shake {
-            0%, 100% { transform: translateX(0) rotate(0deg); }
-            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px) rotate(-2deg); }
-            20%, 40%, 60%, 80% { transform: translateX(3px) rotate(2deg); }
-        }
-        
+          
         .controls {
             position: fixed;
             bottom: calc(env(safe-area-inset-bottom) + 12px);
@@ -153,7 +130,7 @@
             backdrop-filter: blur(20px);
             border-radius: 28px;
         
-            z-index: 1000;
+            z-index: 5;
         }
 
         
@@ -196,7 +173,7 @@
             text-align: center;
         
             text-shadow: 0 4px 18px rgba(0,0,0,0.75);
-            z-index: 1000;
+            z-index: 5;
         }
         
         .time-up {
@@ -219,7 +196,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 500;
+            z-index: 10;
         }
         
         .score-modal.show {
@@ -294,7 +271,7 @@
             background: rgba(0,0,0,0.5); /* fondo semitransparente */
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 10;
         }
 
         .modal-content {
@@ -467,13 +444,6 @@
                 }
             }
 
-            getRandomFace(index) {
-                const faces = dieFaces[index % dieFaces.length];
-                let letter = faces[Math.floor(Math.random() * 6)];
-    
-                return letter;
-            }
-            
             shuffle() {
                 this.startCountdown();
             }
@@ -557,18 +527,7 @@
                         
                         if (self.isTimeUp) return;
             
-                      //  self.animarMezcla();
-
                         self.animarMezcla(() => self.toggleTimer());
-
-                       /* self.createGrid();
-            
-                        self.diceGrid.forEach(die => {
-                            die.classList.add('shaking');
-                            setTimeout(() => die.classList.remove('shaking'), 600);
-                        });*/
-                        
-                      //  self.toggleTimer();
 
                         document.getElementById('timerBtn').disabled = false;
 
@@ -607,7 +566,6 @@
 
 
             showPause() {
-
                 const overlay = document.querySelector('.gridOverlay');
                 const countdown = overlay.querySelector('.countdown');
 
@@ -618,33 +576,11 @@
             }
 
             hidePause() {
-
                 const overlay = document.querySelector('.gridOverlay');
-                const countdown = overlay.querySelector('.countdown');
 
                 // ocultar overlay
                 overlay.style.display = 'none';
             }
-
-           /* animarMezcla(callback) {
-                let frames = 0;
-                const maxFrames = 10; // cantidad de cambios rápidos
-                const intervalo = 50; // velocidad (ms)
-
-                const anim = setInterval(() => {
-                   
-                    this.createGrid();
-
-                    frames++;
-    
-
-                    if (frames >= maxFrames) {
-                        clearInterval(anim);
-                        if (callback) callback();
-                    }
-
-                }, intervalo);
-            }*/
 
             animarMezcla(callback) {
 
