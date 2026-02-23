@@ -557,12 +557,14 @@
                         
                         if (self.isTimeUp) return;
             
-                        self.createGrid();
+                        self.animarMezcla();
+
+                       /* self.createGrid();
             
                         self.diceGrid.forEach(die => {
                             die.classList.add('shaking');
                             setTimeout(() => die.classList.remove('shaking'), 600);
-                        });
+                        });*/
                         
                         self.toggleTimer();
 
@@ -620,6 +622,25 @@
 
                 // ocultar overlay
                 overlay.style.display = 'none';
+            }
+
+            animarMezcla(callback) {
+                let frames = 0;
+                const maxFrames = 15; // cantidad de cambios rápidos
+                const intervalo = 50; // velocidad (ms)
+
+                const anim = setInterval(() => {
+                   
+                    this.createGrid();
+
+                    frames++;
+
+                    if (frames >= maxFrames) {
+                        clearInterval(anim);
+                        if (callback) callback();
+                    }
+
+                }, intervalo);
             }
 
             bindEvents() {
