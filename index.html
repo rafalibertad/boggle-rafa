@@ -647,28 +647,17 @@
 
                 step();
             }
+            
+            play(name) {
+                const original = SFX[name];
+                if (!original) return;
 
-            play(sound) {
-                const s = SFX[sound];
-                if (!s) return;
-
-                s.currentTime = 0; // permite repetir rápido
+                const s = original.cloneNode(true); // ← la clave
+                s.volume = 1;
                 s.play().catch(()=>{});
             }
 
-            unlockAudio() {
-                if (audioUnlocked) return;
-
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-                const buffer = audioCtx.createBuffer(1, 1, 22050);
-                const source = audioCtx.createBufferSource();
-                source.buffer = buffer;
-                source.connect(audioCtx.destination);
-                source.start(0);
-
-                audioUnlocked = true;
-            }
+  
 
             bindEvents() {
                 const shuffleBtn = document.getElementById('shuffleBtn');
@@ -710,11 +699,25 @@
                     }
                 };
 
-                document.body.addEventListener('pointerdown', unlockAudio, { once: true });
-
             }
         }
 
+        function unlockAudio() {
+            if (audioUnlocked) return;
+
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+            const buffer = audioCtx.createBuffer(1, 1, 22050);
+            const source = audioCtx.createBufferSource();
+            source.buffer = buffer;
+            source.connect(audioCtx.destination);
+            source.start(0);
+
+            audioUnlocked = true;
+        }
+        
+        document.body.addEventListener('pointerdown', unlockAudio, { once: true });
+        
         new BoggleGame();
     </script>
 </body>
