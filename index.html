@@ -378,9 +378,6 @@
     
     <script>
 
-        let audioUnlocked = false;
-        let audioCtx;
-
         const dieFaces = [
             ['A','A','E','E','O','O'],
             ['A','E','I','O','U','S'],
@@ -583,7 +580,7 @@
                 // Mostrar overlay
                 overlay.style.display = 'flex';
                 countdown.style.transform = 'scale(1)';
-                countdown.textContent = 'BOGGLe';
+                countdown.textContent = 'BOGGLo';
             }
 
 
@@ -699,25 +696,20 @@
                     }
                 };
 
+                document.body.addEventListener('pointerdown', () => {
+                    Object.values(SFX).forEach(a => {
+                        a.volume = 0;
+                        a.play().then(() => {
+                            a.pause();
+                            a.currentTime = 0;
+                            a.volume = 1;
+                        }).catch(()=>{});
+                    });
+                }, { once: true });
+
             }
         }
-
-        function unlockAudio() {
-            if (audioUnlocked) return;
-
-            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-            const buffer = audioCtx.createBuffer(1, 1, 22050);
-            const source = audioCtx.createBufferSource();
-            source.buffer = buffer;
-            source.connect(audioCtx.destination);
-            source.start(0);
-
-            audioUnlocked = true;
-        }
-        
-        document.body.addEventListener('pointerdown', unlockAudio, { once: true });
-        
+      
         new BoggleGame();
     </script>
 </body>
