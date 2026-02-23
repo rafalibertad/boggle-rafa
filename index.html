@@ -302,7 +302,7 @@
             bottom: 2px;
             left: 10%;
             width: 80%;
-            height: 2px;
+            height: 8px;
             background: black;
             border-radius: 1px;
         }
@@ -391,7 +391,7 @@
     <div id="confirmModal" class="modal">
     <div class="modal-content">
         <p>PAUSA</p>
-        <button id="confirmYes">Reiniciar</button>
+        <button id="confirmYes">Mezclar</button>
         <button id="confirmNo">Continuar</button>
     </div>
     </div>
@@ -399,8 +399,8 @@
     <div id="confirmShuffleModal" class="modal">
     <div class="modal-content">
         <p>MEZCLAR</p>
-        <button id="confirmShuffleYes">Si</button>
-        <button id="confirmShuffleNo">No</button>
+        <button id="confirmShuffleYes">Sin giro</button>
+        <button id="confirmShuffleYesRotate">Con giro</button>
     </div>
     </div>
     
@@ -454,7 +454,7 @@
                 this.bindEvents();
             }
 
-            createGrid2() {
+            createGrid() {
                 const grid = document.getElementById('diceGrid');
                 grid.innerHTML = '';
                 this.diceGrid = [];
@@ -482,7 +482,7 @@
                 }
             }
 
-            createGrid() {
+            createGridGira() {
                 const grid = document.getElementById('diceGrid');
                 grid.innerHTML = '';
                 this.diceGrid = [];
@@ -530,8 +530,13 @@
                 return letter;
             }
 
-            shuffle() {
-                this.startCountdown();
+            shuffle(mode) {
+                this.resetTimer();
+                const overlay = document.querySelector('.gridOverlay');
+                overlay.style.display = 'none';
+                if (self.isTimeUp) return;
+                this.animarMezcla(() => this.toggleTimer(), mode);
+                return;
             }
 
             startTimerInterval() {
@@ -594,22 +599,8 @@
                     `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
             }
 
-            startCountdown() {
-                this.resetTimer();
-                
-                const overlay = document.querySelector('.gridOverlay');
-
-                overlay.style.display = 'none';
-                        
-                if (self.isTimeUp) return;
-            
-                this.animarMezcla(() => this.toggleTimer());
-
-                return;
-            }
 
             showIntro() {
-
                 const overlay = document.querySelector('.gridOverlay');
                 const countdown = overlay.querySelector('.countdown');
 
@@ -637,14 +628,19 @@
                 overlay.style.display = 'none';
             }
 
-            animarMezcla(callback) {
+            animarMezcla(callback, mode) {
                 this.play('shake');
                 let frame = 0;
                 const maxFrames = 25;   // un poco más larga, pero empieza MUCHO más rápida
 
                 const step = () => {
 
-                    this.createGrid();
+                    if (mode == 1) {
+                        this.createGrid();
+                    } else if (mode == 2) {
+                        this.createGridGira();    
+                    }
+                    
                     frame++;
 
                     let intervalo;
@@ -669,7 +665,11 @@
                     } else {
 
                         // tablero definitivo
-                        this.createGrid();
+                        if (mode == 1) {
+                            this.createGrid();
+                        } else if (mode == 2) {
+                            this.createGridGira();    
+                        }
 
                         // pequeño "clack" sensorial en móviles
                         navigator.vibrate?.(40);
@@ -703,7 +703,8 @@
 
                 const shuffleModal = document.getElementById('confirmShuffleModal');
                 const yesShuffleBtn = document.getElementById('confirmShuffleYes');
-                const noShuffleBtn = document.getElementById('confirmShuffleNo');
+                const yesShuffleRotateBtn = document.getElementById('confirmShuffleYesRotate');
+                
 
                 shuffleBtn.onclick = () => {
                     shuffleModal.style.display = 'flex'; // mostrar modal
@@ -711,9 +712,10 @@
 
                 yesBtn.onclick = () => {
                     modal.style.display = 'none'; // ocultar modal
-                    this.resetTimer();
-                    this.showIntro();
-                    document.getElementById('shuffleBtn').disabled = false;
+                    shuffleModal.style.display = 'flex'; // mostrar modal
+                  //  this.resetTimer();
+                  //  this.showIntro();
+                  //  document.getElementById('shuffleBtn').disabled = false;
                 };
 
                 noBtn.onclick = () => {
@@ -723,14 +725,14 @@
 
                 yesShuffleBtn.onclick = () => {
                     shuffleModal.style.display = 'none'; // ocultar modal
-                    this.shuffle();
+                    this.shuffle(1);
                 };
 
-                noShuffleBtn.onclick = () => {
-                    shuffleModal.style.display = 'none'; // ocultar modal y no hacer nada
+                yesShuffleRotateBtn.onclick = () => {
+                    shuffleModal.style.display = 'none'; // ocultar modal
+                    this.shuffle(2);
                 };
-
-
+   
                 timerBtn.onclick = () => {
                     this.toggleTimer()
                 };
