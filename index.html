@@ -290,6 +290,26 @@
             font-size: 22px;
             font-weight: 800;
         }
+
+        /* Estilos para letras con barra */
+        .marked {
+            position: relative;
+            display: inline-block;
+        }
+        .marked::after {
+            content: '';
+            position: absolute;
+            bottom: 2px;
+            left: 10%;
+            width: 80%;
+            height: 2px;
+            background: black;
+            border-radius: 1px;
+        }
+        .letter {
+            display: inline-block;
+            transition: transform 0.3s;
+        }
         
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -434,7 +454,7 @@
                 this.bindEvents();
             }
 
-            createGrid() {
+            createGrid2() {
                 const grid = document.getElementById('diceGrid');
                 grid.innerHTML = '';
                 this.diceGrid = [];
@@ -460,6 +480,54 @@
                     this.diceGrid.push(die);
                     grid.appendChild(die);
                 }
+            }
+
+            createGrid() {
+                const grid = document.getElementById('diceGrid');
+                grid.innerHTML = '';
+                this.diceGrid = [];
+
+                // Copiar y barajar dados
+                const dice = [...dieFaces];
+                for (let i = dice.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [dice[i], dice[j]] = [dice[j], dice[i]];
+                }
+
+                for (let i = 0; i < 16; i++) {
+                    const die = document.createElement('div');
+                    die.className = 'die';
+                    die.dataset.index = i;
+
+                    const faces = dice[i];
+                    const letter = faces[Math.floor(Math.random() * 6)];
+
+                    // Crear span para la letra
+                    const span = document.createElement('span');
+                    span.className = 'letter';
+                    span.innerHTML = this.formatLetter(letter);
+
+                    // Rotación aleatoria del dado y de la letra
+                    const dieAngle = Math.floor(Math.random() * 4) * 90; // 0°,90°,180°,270°
+                    const letterAngle = Math.floor(Math.random() * 4) * 90;
+
+                    die.style.transform = `rotate(${dieAngle}deg)`;
+                    span.style.transform = `rotate(${letterAngle}deg)`;
+
+                    die.appendChild(span);
+
+                    this.diceGrid.push(die);
+                    grid.appendChild(die);
+                }
+            }
+
+            formatLetter(letter) {
+                // Letras que necesitan barra debajo
+                const marked = ['M','W','N','Z','U'];
+                if (marked.includes(letter)) {
+                    return `<span class="marked">${letter}</span>`;
+                }
+                return letter;
             }
 
             shuffle() {
