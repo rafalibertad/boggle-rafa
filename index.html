@@ -375,6 +375,14 @@
         <button id="confirmNo">&nbsp;&nbsp;&nbsp;&nbsp;Continuar&nbsp;&nbsp;&nbsp;&nbsp;</button>
     </div>
     </div>
+
+    <div id="confirmShuffleModal" class="modal">
+    <div class="modal-content">
+        <p>MEZCLAR</p>
+        <button id="confirmShuffleYes">&nbsp;&nbsp;&nbsp;&nbsp;Si&nbsp;&nbsp;&nbsp;&nbsp;</button>
+        <button id="confirmShuffleNo">&nbsp;&nbsp;&nbsp;&nbsp;No&nbsp;&nbsp;&nbsp;&nbsp;</button>
+    </div>
+    </div>
     
     <script>
 
@@ -412,7 +420,7 @@
             constructor() {
                 this.diceGrid = [];
                 this.timer = 0;
-                this.maxTime = 180;
+                this.maxTime = 15;
                 this.timerInterval = null;
                 this.isTimerRunning = false;
                 this.isTimeUp = false;
@@ -462,7 +470,7 @@
                 this.timerInterval = setInterval(() => {
                     this.timer++;
                     this.updateTimerDisplay();
-                    if (this.timer == this.maxTime - 10) this.play('clock');
+                    if (this.timer >= this.maxTime - 10) this.play('clock');
                     if (this.timer >= this.maxTime) this.timeUp();
                 }, 1000);
             }
@@ -521,53 +529,16 @@
 
             startCountdown() {
                 this.resetTimer();
-
+                
                 const overlay = document.querySelector('.gridOverlay');
-                const countdown = overlay.querySelector('.countdown');
-                const pasos = ["3", "2", "1", "YA!"];
 
-                // Mostrar overlay y reset
-                overlay.style.display = 'flex';
-                countdown.style.transform = 'scale(1)';
-                countdown.textContent = '';
-
-                const self = this;
-
-                function mostrarPaso(index) {
-                    if (index >= pasos.length) {
-                        // Terminado: ocultar overlay
-                        overlay.style.display = 'none';
+                overlay.style.display = 'none';
                         
-                        if (self.isTimeUp) return;
+                if (self.isTimeUp) return;
             
-                        self.animarMezcla(() => self.toggleTimer());
+                this.animarMezcla(() => this.toggleTimer());
 
-                        //document.getElementById('timerBtn').disabled = false;
-
-                        return;
-                    }
-
-                    // Mostrar número actual
-                    countdown.textContent = pasos[index];
-                 
-                    if (index == 0) {
-                       self.play('tick');
-                    }
-                     
-                    // Rebote con CSS
-                    countdown.style.transform = 'scale(1.5)';
-                    setTimeout(() => {
-                        countdown.style.transform = 'scale(1)';
-                    }, 300);
-
-                    // Pasar al siguiente número después de 1 segundo
-                    setTimeout(() => {
-                        mostrarPaso(index + 1);
-                    }, 1000);
-                }
-
-                // Empezar con el primer número
-                mostrarPaso(0);
+                return;
             }
 
             showIntro() {
@@ -663,13 +634,19 @@
                 const yesBtn = document.getElementById('confirmYes');
                 const noBtn = document.getElementById('confirmNo');
 
+                const shuffleModal = document.getElementById('confirmShuffleModal');
+                const yesShuffleBtn = document.getElementById('confirmShuffleYes');
+                const noShuffleBtn = document.getElementById('confirmShuffleNo');
+
                 shuffleBtn.onclick = () => {
-                    this.shuffle(); // llamar a tu función
+                    shuffleModal.style.display = 'flex'; // mostrar modal
                 };
 
                 yesBtn.onclick = () => {
                     modal.style.display = 'none'; // ocultar modal
-                    this.shuffle();
+                    this.resetTimer();
+                    this.showIntro();
+                    document.getElementById('shuffleBtn').disabled = false;
                 };
 
                 noBtn.onclick = () => {
@@ -677,11 +654,19 @@
                     this.toggleTimer();
                 };
 
+                yesShuffleBtn.onclick = () => {
+                    shuffleModal.style.display = 'none'; // ocultar modal
+                    this.shuffle();
+                };
+
+                noShuffleBtn.onclick = () => {
+                    shuffleModal.style.display = 'none'; // ocultar modal y no hacer nada
+                };
+
 
                 timerBtn.onclick = () => {
                     this.toggleTimer()
                 };
-
 
                 // Puntaje modal
                 document.getElementById('scoreBtn').onclick = () => {
