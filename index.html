@@ -407,7 +407,7 @@
 
         const SFX = {};
 
-        ['shake','tick','finish','clock'].forEach(name=>{
+        ['shake','finish'].forEach(name=>{
             const a = document.createElement('audio');
             a.src = `sfx/${name}.mp3`;
             a.preload = 'auto';
@@ -470,7 +470,6 @@
                 this.timerInterval = setInterval(() => {
                     this.timer++;
                     this.updateTimerDisplay();
-                    if (this.timer >= this.maxTime - 10) this.play('clock');
                     if (this.timer >= this.maxTime) this.timeUp();
                 }, 1000);
             }
