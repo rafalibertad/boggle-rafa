@@ -296,15 +296,23 @@
             position: relative;
             display: inline-block;
         }
+        .marked::before,
         .marked::after {
             content: '';
             position: absolute;
             bottom: 2px;
-            left: 10%;
-            width: 80%;
-            height: 4px;
+            width: 6px;      /* tamaño del punto */
+            height: 6px;
             background: black;
-            border-radius: 1px;
+            border-radius: 50%;
+        }
+
+        .marked::before {
+            left: 25%;
+        }
+
+        .marked::after {
+            right: 25%;
         }
         .letter {
             display: inline-block;
@@ -495,7 +503,7 @@
 
             formatLetter(letter) {
                 // Letras que necesitan barra debajo
-                const marked = ['N','Z'];
+                const marked = ['Z'];
                 if (marked.includes(letter)) {
                     return `<span class="marked">${letter}</span>`;
                 }
